@@ -21,7 +21,6 @@
     "url": "https://github.com/lidofinance/lido-keys-api/issues"
   },
   "scripts": {
-    "postinstall": "yarn chronix:compile",
     "mikro-orm": "./node_modules/mikro-orm",
     "prebuild": "rimraf dist",
     "build": "nest build",
