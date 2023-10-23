@@ -23,9 +23,11 @@
             name = "lido-keys-api";
             buildInputs = super.buildInputs ++ [pkgs.python3];
             buildPhase = ''
-              yarn postinstall
+              yarn typechain
+              # yarn postinstall
               # yarn build
             '';
+            dontFixup = true;
           };
         };
       in {
