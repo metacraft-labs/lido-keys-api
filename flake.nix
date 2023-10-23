@@ -17,22 +17,34 @@
         nodejs = pkgs.nodejs_20;
         yarn = pkgs.yarn.override {inherit nodejs;};
         defaultPackages = [nodejs yarn];
-        lido-keys-api = pkgs.callPackage ./yarn-project.nix {inherit nodejs;} {
-          src = pkgs.lib.cleanSource ./.;
+
+        src = pkgs.lib.sourceByRegex ./. [
+          "\.yarn(/releases.*)?"
+          "\.yarn(/plugins.*)?"
+          "package\.json"
+          "yarn\.lock"
+          "\.yarnrc\.yml"
+        ];
+
+        lido-keys-api-deps = pkgs.callPackage ./yarn-project.nix {inherit nodejs;} {
+          inherit src;
           overrideAttrs = super: {
             name = "lido-keys-api";
             buildInputs = super.buildInputs ++ [pkgs.python3];
-            buildPhase = ''
-              yarn typechain
-              # yarn postinstall
-              # yarn build
-            '';
             dontFixup = true;
           };
         };
+        lido-keys-api = pkgs.runCommand "lido-keys-api build scripts" {} ''
+          mkdir -p $out
+          touch $out/example
+          ls -la ${lido-keys-api-deps}
+          # yarn typechain
+          # yarn chronix:compile
+          # yarn build
+        '';
       in {
         packages = {
-          inherit lido-keys-api;
+          inherit lido-keys-api lido-keys-api-deps;
           default = lido-keys-api;
         };
         devShells.default = pkgs.mkShellNoCC {packages = defaultPackages;};
