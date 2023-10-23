@@ -15,7 +15,9 @@
       systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
       perSystem = {pkgs, ...}: let
         nodejs = pkgs.nodejs_20;
-        yarn = pkgs.yarn.override {inherit nodejs;};
+        yarn = pkgs.writeShellScriptBin "yarn" ''
+          exec '${nodejs}/bin/node' '${./.yarn/releases/yarn-3.6.4.cjs}' "$@"
+        '';
         defaultPackages = [nodejs yarn];
 
         src = pkgs.lib.sourceByRegex ./. [
@@ -40,7 +42,7 @@
           ls -la ${lido-keys-api-deps}
           # yarn typechain
           # yarn chronix:compile
-          # yarn build
+          yarn build
         '';
       in {
         packages = {
