@@ -1,8 +1,8 @@
 import { Inject, Injectable, LoggerService } from '@nestjs/common';
-import { FetchModuleOptions, FetchService, RequestInfo } from '@lido-nestjs/fetch';
+import { FetchModuleOptions, FetchService, RequestInfo, RequestInit } from '@lido-nestjs/fetch';
 import { MiddlewareService } from '@lido-nestjs/middleware';
 import { AbortController } from 'node-abort-controller';
-import { RequestInit, Response } from 'node-fetch';
+import { Response } from 'node-fetch';
 import { CONSENSUS_REQUEST_TIMEOUT } from './consensus-provider.constants';
 import { LOGGER_PROVIDER } from '@lido-nestjs/logger';
 
@@ -19,7 +19,11 @@ export class ConsensusFetchService extends FetchService {
   /**
    * Adds timeout to the source method of fetch service
    */
-  protected async request(url: RequestInfo, init?: RequestInit, attempt = 0) {
+  protected request(
+    url: RequestInfo,
+    options?: RequestInit | undefined,
+    attempt?: number | undefined,
+  ): Promise<Response> {
     const controller = new AbortController();
     const { signal } = controller;
 
@@ -27,6 +31,6 @@ export class ConsensusFetchService extends FetchService {
       controller.abort();
     }, CONSENSUS_REQUEST_TIMEOUT);
 
-    return super.request(url, { ...init, signal }, attempt);
+    return super.request(url, { ...options, signal }, attempt);
   }
 }

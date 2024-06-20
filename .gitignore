@@ -47,3 +47,18 @@ lerna-debug.log*
 
 # benchmarks
 /benchmarks/output.json
+
+# Yarn v2+
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Direnv
+.direnv
+
+# Nix
+result
